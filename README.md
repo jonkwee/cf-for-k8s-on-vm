@@ -18,3 +18,7 @@ There are a series of steps that you will have to take before we can build the V
 
 ## Warning
 - The VM is set to start up with 12 cpus and 20GB of RAM. You can configure the starting numbers in the Vagrantfile but I only have success starting up cf-for-k8s using 20GB of RAM.
+
+## Pending Work
+- Need to research how to share a VPN network with the VM. Currently, if you are on VPN, the network within the VM is borked and all network calls will fail.
+- cf authentication is still not working as expected.
