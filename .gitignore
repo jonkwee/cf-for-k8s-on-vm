@@ -1,0 +1,2 @@
+# ignore docker_credentials property file
+configs/docker_credentials.properties
