@@ -97,19 +97,23 @@ append_additional_install_values()
 append_dockerhub_config()
 {
     echo "Appending Dockerhub config..."
-    source ../configs/docker_credentials.properties
     {
-        echo 'app_registry:'
-        echo '  hostname: https://index.docker.io/v1/'
-        echo '  repository_prefix: "${docker_username}"'
-        echo '  username: "${docker_username}"'
-        echo '  password: "${docker_password}"'
+        printf "app_registry:\n"
+        printf "$2 hostname: https://index.docker.io/v1/\n"
+        printf "$2 repository_prefix: $DOCKER_USERNAME\n"
+        printf "$2 username: $DOCKER_USERNAME\n"
+        printf "$2 password: $DOCKER_PASSWORD"
     } >> ${TMP_DIR}/cf-values.yml
 }
 
 export_env_variables()
 {
-    export KUBECONFIG="/home/vagrant/tmp/kube.config"
+    if ! grep -q "KUBECONFIG" /etc/environment; then
+        printf "\nKUBECONFIG=$KUBECONFIG" >> /etc/environment
+    fi
+    if ! grep -q "TMP_DIR" /etc/environment; then
+        printf "\nTMP_DIR=$TMP_DIR" >> /etc/environment
+    fi
 }
 
 setup_cf()
@@ -133,6 +137,12 @@ cf_for_k8s_setup()
         cd cf-for-k8s 
     fi
 
+    cluster=$(kind get clusters)
+    if [ ! "${cluster}" = "kind" ]; then
+        echo "Creating kind cluster..."
+        kind create cluster --config=./deploy/kind/cluster.yml --image kindest/node:v1.20.2
+    fi
+
     if [ ! -f "${TMP_DIR}/cf-values.yml" ]; then
         # Generate CF Installation Values
         echo "Generate CF Installation values..."
@@ -147,19 +157,11 @@ cf_for_k8s_setup()
         ytt -f config -f ${TMP_DIR}/cf-values.yml > ${TMP_DIR}/cf-for-k8s-rendered.yml
     fi
 
-    cluster=$(kind get clusters)
-    if [ ! "${cluster}" = "kind" ]; then
-        echo "Creating kind cluster..."
-        kind create cluster --config=./deploy/kind/cluster.yml --image kindest/node:v1.20.2
-    fi
-
     echo "Deploying..."
     kapp deploy -a cf -f ${TMP_DIR}/cf-for-k8s-rendered.yml -y
 
     # setup_cf
 }
-
-TMP_DIR=/home/vagrant/tmp
 
 add_repositories
 update_os
