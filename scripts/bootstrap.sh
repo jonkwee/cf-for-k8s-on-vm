@@ -120,9 +120,9 @@ setup_cf()
 {
     cf api --skip-ssl-validation https://api.vcap.me
     cf auth admin "$(grep cf_admin_password ${TMP_DIR}/cf-values.yml | cut -d" " -f2)"
-    cf create-org connected-capture
-    cf create-space -o connected-capture cc-dev
-    cf target -o connected-capture -s cc-dev
+    cf create-org $CF_ORG
+    cf create-space -o $CF_ORG $CF_SPACE
+    cf target -o $CF_ORG -s $CF_SPACE
 }
 
 cf_for_k8s_setup()
@@ -146,7 +146,6 @@ cf_for_k8s_setup()
     if [ ! -f "${TMP_DIR}/cf-values.yml" ]; then
         # Generate CF Installation Values
         echo "Generate CF Installation values..."
-        CF_DOMAIN="vcap.me"
         ./hack/generate-values.sh -d ${CF_DOMAIN} > ${TMP_DIR}/cf-values.yml
         append_additional_install_values
         append_dockerhub_config
@@ -160,7 +159,7 @@ cf_for_k8s_setup()
     echo "Deploying..."
     kapp deploy -a cf -f ${TMP_DIR}/cf-for-k8s-rendered.yml -y
 
-    # setup_cf
+    setup_cf
 }
 
 add_repositories
