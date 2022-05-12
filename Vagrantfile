@@ -21,8 +21,8 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/ubuntu2004"
   config.vm.provision "shell" do |s|
     s.env = {
-      "DOCKER_USERNAME" => docker_config["username"],
-      "DOCKER_PASSWORD" => docker_config["password"],
+      "REGISTRY_USERNAME" => docker_config["username"],
+      "REGISTRY_PASSWORD" => docker_config["password"],
       "TMP_DIR" => provision_config["tmpPath"],
       "KUBECONFIG" => kube_config["configPath"],
       "CF_ORG" => cf_config["org"],

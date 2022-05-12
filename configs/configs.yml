@@ -7,6 +7,6 @@ configs:
   kube:
     configPath: /home/vagrant/tmp/kube.config
   cf:
-    org: connected-capture
-    space: cc-dev
+    org: <organization>
+    space: <space>
     domain: vcap.me
