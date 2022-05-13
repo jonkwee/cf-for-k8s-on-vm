@@ -23,5 +23,3 @@ There are a series of steps that you will have to take before we can build the V
 
 ## Pending Work
 - Need to research how to share a VPN network with the VM. Currently, if you are on VPN, the network within the VM is borked and all network calls will fail.
-- cf authentication is still not working as expected.
-- registry-buddy container in cf-worker and cf-server pods is always crashing. Need to find root cause of why.

@@ -119,7 +119,7 @@ export_env_variables()
     fi
     if ! grep -q "REGISTRY_PASSWORD" /etc/environment; then
         printf "\nREGISTRY_PASSWORD=$REGISTRY_PASSWORD" >> /etc/environment
-    fi  
+    fi
 }
 
 setup_cf()
@@ -136,7 +136,7 @@ cf_for_k8s_setup()
     export_env_variables
     if [ ! -d "/home/vagrant/cf-for-k8s" ]; then
         echo "Cloning cf-for-k8s..."
-        git clone https://github.com/cloudfoundry/cf-for-k8s.git -b main
+        git clone https://github.com/jonkwee/cf-for-k8s.git -b main
         cd cf-for-k8s    
         mkdir -p ${TMP_DIR}
     else
