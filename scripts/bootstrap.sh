@@ -100,9 +100,9 @@ append_dockerhub_config()
     {
         printf "app_registry:\n"
         printf "$2 hostname: https://index.docker.io/v1/\n"
-        printf "$2 repository_prefix: $DOCKER_USERNAME\n"
-        printf "$2 username: $DOCKER_USERNAME\n"
-        printf "$2 password: $DOCKER_PASSWORD"
+        printf "$2 repository_prefix: $REGISTRY_USERNAME\n"
+        printf "$2 username: $REGISTRY_USERNAME\n"
+        printf "$2 password: $REGISTRY_PASSWORD"
     } >> ${TMP_DIR}/cf-values.yml
 }
 
@@ -114,6 +114,12 @@ export_env_variables()
     if ! grep -q "TMP_DIR" /etc/environment; then
         printf "\nTMP_DIR=$TMP_DIR" >> /etc/environment
     fi
+    if ! grep -q "REGISTRY_USERNAME" /etc/environment; then
+        printf "\nREGISTRY_USERNAME=$REGISTRY_USERNAME" >> /etc/environment
+    fi
+    if ! grep -q "REGISTRY_PASSWORD" /etc/environment; then
+        printf "\nREGISTRY_PASSWORD=$REGISTRY_PASSWORD" >> /etc/environment
+    fi  
 }
 
 setup_cf()
