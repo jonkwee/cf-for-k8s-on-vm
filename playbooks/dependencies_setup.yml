@@ -1,0 +1,85 @@
+--- 
+- name: Adding Cloud Foundry GPG Key
+  become: true
+  apt_key:
+    url: https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key
+    state: present
+
+- name: Adding Cloud Foundry Apt Repository
+  become: true
+  apt_repository:
+    repo: deb https://packages.cloudfoundry.org/debian stable main
+    state: present
+    filename: cloudfoundry-cli
+
+- name: Adding Docker GPG Key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Adding Docker Apt Repository
+  become: true
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: Update and upgrade apt packages
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+    autoremove: true
+
+- name: Download ytt
+  become: true
+  get_url:
+    url: https://github.com/vmware-tanzu/carvel-ytt/releases/download/v0.40.1/ytt-linux-amd64
+    dest: /usr/local/bin/ytt
+    mode: +x
+    checksum: sha256:11222665c627b8f0a1443534a3dde3c9b3aac08b322d28e91f0e011e3aeb7df5
+
+- name: Download kapp
+  become: true
+  get_url: 
+    url: https://github.com/vmware-tanzu/carvel-kapp/releases/download/v0.47.0/kapp-linux-amd64
+    dest: /usr/local/bin/kapp
+    mode: +x
+    checksum: sha256:2b1bd5e3a35ed63045be80a7cc8cbc054fe4e98c89c55f9006c8fec2243658a4
+    
+- name: Download kind
+  become: true
+  get_url: 
+    url: https://github.com/kubernetes-sigs/kind/releases/download/v0.13.0/kind-linux-amd64
+    dest: /usr/local/bin/kind
+    mode: +x
+    checksum: sha256:https://github.com/kubernetes-sigs/kind/releases/download/v0.13.0/kind-linux-amd64.sha256sum
+
+- name: Download Kubernetes
+  become: true
+  get_url: 
+    url: https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: +x
+    checksum: sha256:94d686bb6772f6fb59e3a32beff908ab406b79acdfb2427abdc4ac3ce1bb98d7
+
+- name: Download Bosh
+  become: true
+  get_url: 
+    url: https://github.com/cloudfoundry/bosh-cli/releases/download/v6.4.17/bosh-cli-6.4.17-linux-amd64
+    dest: /usr/local/bin/bosh
+    mode: +x
+    checksum: sha256:d0917d3ad0ff544a4c69a7986e710fe48e8cb2207717f77db31905d639e28c18
+
+- name: Install CF7 CLI
+  become: true
+  apt:
+    name: cf7-cli
+
+- name: Install Docker
+  become: true
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io

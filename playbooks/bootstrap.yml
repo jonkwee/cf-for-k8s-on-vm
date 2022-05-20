@@ -1,0 +1,8 @@
+---
+- name: Boostrapping CF-for-K8s and its dependencies
+  hosts: all
+  tasks:
+    - include_tasks: dns_setup.yml
+    - include_tasks: dependencies_setup.yml
+    - include_tasks: env_variables_setup.yml
+    - include_tasks: cf_for_k8s_setup.yml

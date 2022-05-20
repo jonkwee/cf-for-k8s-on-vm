@@ -4,9 +4,10 @@ configs:
     password: <password>
   provision:
     tmpPath: /home/vagrant/tmp
+    configPath: /home/vagrant/configs
   kube:
-    configPath: /home/vagrant/tmp/kube.config
+    configPath: /home/vagrant/configs/kube.config
   cf:
-    org: <organization>
+    org: <org>
     space: <space>
     domain: vcap.me

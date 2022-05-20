@@ -1,0 +1,64 @@
+---
+- name: Clone cf-for-k8s repository from Github
+  git:
+    repo: https://github.com/jonkwee/cf-for-k8s.git
+    dest: "{{ TMP_DIR }}/cf-for-k8s"
+    single_branch: yes
+    version: main
+
+- name: Create Kind Cluster
+  become: yes
+  shell: kind create cluster --config=./deploy/kind/cluster.yml --image kindest/node:v1.24.0
+  args:
+    creates: "{{ TMP_DIR }}/kind.success"
+    chdir: "{{ TMP_DIR }}/cf-for-k8s"
+
+- name: Create placeholder file indicating successful Kind cluster
+  file:
+    path: "{{ TMP_DIR }}/kind.success"
+    state: touch
+
+- name: Generate cf-values
+  become: yes
+  shell: ./hack/generate-values.sh -d {{ CF_DOMAIN }} > {{ CONFIG_DIR }}/cf-values.yml
+  args:
+    creates: "{{ CONFIG_DIR }}/cf-values.yml"
+    chdir: "{{ TMP_DIR }}/cf-for-k8s"
+
+- name: Append additional values onto cf-values
+  become: yes
+  blockinfile:
+    path: "{{ CONFIG_DIR }}/cf-values.yml"
+    marker: "#! {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      add_metrics_server_components: true
+      enable_automount_service_account_token: true
+      metrics_server_prefer_internal_kubelet_address: true
+      remove_resource_requirements: true
+      use_first_party_jwt_tokens: true
+      load_balancer:
+        enable: false
+      app_registry:
+        hostname: https://index.docker.io/v1/
+        repository_prefix: {{ REGISTRY_USERNAME }}
+        username: {{ REGISTRY_USERNAME }}
+        password: {{ REGISTRY_PASSWORD }}
+  
+- name: Generate rendered config from cf-values
+  become: yes
+  shell: ytt -f config -f {{ CONFIG_DIR }}/cf-values.yml > {{ CONFIG_DIR }}/cf-for-k8s-rendered.yml
+  args:
+    creates: "{{ CONFIG_DIR }}/cf-for-k8s-rendered.yml"
+    chdir: "{{ TMP_DIR }}/cf-for-k8s"
+
+- name: Deploying CF-for-K8s
+  become: yes
+  shell: kapp deploy -a cf -f {{ CONFIG_DIR }}/cf-for-k8s-rendered.yml -y
+  args:
+    creates: "{{ TMP_DIR }}/cf_for_k8s.success"
+    chdir: "{{ TMP_DIR }}/cf-for-k8s"
+
+- name: Create placeholder file indicating successful cf-for-k8s deployment
+  file:
+    path: "{{ TMP_DIR }}/cf_for_k8s.success"
+    state: touch

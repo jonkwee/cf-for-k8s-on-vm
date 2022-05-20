@@ -1,0 +1,24 @@
+---
+- name: Add KUBECONFIG environment variable
+  become: true
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ KUBECONFIG }}="
+    line: "KUBECONFIG={{ KUBECONFIG }}"
+
+- name: Add registry username environment variable
+  become: true
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ REGISTRY_USERNAME }}="
+    line: "REGISTRY_USERNAME={{ REGISTRY_USERNAME }}"
+
+- name: Add registry password environment variable
+  become: true
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ REGISTRY_PASSWORD }}="
+    line: "REGISTRY_PASSWORD={{ REGISTRY_PASSWORD }}"

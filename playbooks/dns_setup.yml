@@ -1,0 +1,22 @@
+---
+- name: Download resolvconf
+  become: true
+  apt:
+    name: resolvconf
+    update_cache: yes
+
+- name: Run resolvconf.service
+  become: true
+  systemd:
+    state: started
+    name: resolvconf.service
+
+- name: Append Google DNS server
+  become: true
+  lineinfile:
+    path: /etc/resolvconf/resolv.conf.d/head
+    line: nameserver 8.8.8.8
+
+- name: Update resolv.conf
+  become: true
+  shell: resolvconf -u

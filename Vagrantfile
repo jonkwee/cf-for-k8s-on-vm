@@ -17,19 +17,22 @@ Vagrant.configure("2") do |config|
     v.memory = 16384
     v.cpus = 8
   end
-
+  config.vm.synced_folder "playbooks/", "/home/vagrant/playbooks", type: "rsync"
   config.vm.box = "generic/ubuntu2004"
-  config.vm.provision "shell" do |s|
-    s.env = {
-      "REGISTRY_USERNAME" => docker_config["username"],
-      "REGISTRY_PASSWORD" => docker_config["password"],
-      "TMP_DIR" => provision_config["tmpPath"],
-      "KUBECONFIG" => kube_config["configPath"],
-      "CF_ORG" => cf_config["org"],
-      "CF_SPACE" => cf_config["space"],
-      "CF_DOMAIN" => cf_config["domain"]
+
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "bootstrap.yml"
+    ansible.provisioning_path = "/home/vagrant/playbooks"
+    ansible.extra_vars = {
+      KUBECONFIG: kube_config["configPath"],
+      TMP_DIR: provision_config["tmpPath"],
+      CONFIG_DIR: provision_config["configPath"],
+      REGISTRY_USERNAME: docker_config["username"],
+      REGISTRY_PASSWORD: docker_config["password"],
+      CF_ORG: cf_config["org"],
+      CF_SPACE: cf_config["space"],
+      CF_DOMAIN: cf_config["domain"]
     }
-    s.path = "scripts/bootstrap.sh"
   end
 
 end
