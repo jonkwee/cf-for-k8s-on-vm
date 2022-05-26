@@ -18,7 +18,21 @@ Vagrant.configure("2") do |config|
     v.cpus = 8
   end
   config.vm.synced_folder "playbooks/", "/home/vagrant/playbooks", type: "rsync"
+  config.vm.synced_folder "clusters/", "/home/vagrant/cluster_configs", type: "rsync"
+  config.vm.synced_folder "credentials/", "/home/vagrant/credentials", type: "rsync"
+  
   config.vm.box = "generic/ubuntu2004"
+
+  config.vm.network "forwarded_port", guest: 15672, host: 15672
+  
+  $install_ansible_script = <<-SCRIPT
+  sudp apt update
+  sudo apt install software-properties-common
+  sudo add-apt-repository --yes --update ppa:ansible/ansible
+  sudo apt -y install ansible
+  SCRIPT
+
+  config.vm.provision "shell", inline: $install_ansible_script
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "bootstrap.yml"
@@ -27,6 +41,7 @@ Vagrant.configure("2") do |config|
       KUBECONFIG: kube_config["configPath"],
       TMP_DIR: provision_config["tmpPath"],
       CONFIG_DIR: provision_config["configPath"],
+      CREDENTIAL_DIR: provision_config["credentialPath"],
       REGISTRY_USERNAME: docker_config["username"],
       REGISTRY_PASSWORD: docker_config["password"],
       CF_ORG: cf_config["org"],

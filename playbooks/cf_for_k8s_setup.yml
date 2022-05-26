@@ -3,12 +3,11 @@
   git:
     repo: https://github.com/jonkwee/cf-for-k8s.git
     dest: "{{ TMP_DIR }}/cf-for-k8s"
-    single_branch: yes
     version: main
 
 - name: Create Kind Cluster
   become: yes
-  shell: kind create cluster --config=./deploy/kind/cluster.yml --image kindest/node:v1.24.0
+  shell: kind create cluster --config=/home/vagrant/cluster_configs/kind_cluster.yml --image kindest/node:v1.24.0
   args:
     creates: "{{ TMP_DIR }}/kind.success"
     chdir: "{{ TMP_DIR }}/cf-for-k8s"

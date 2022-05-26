@@ -1,17 +1,4 @@
 --- 
-- name: Adding Cloud Foundry GPG Key
-  become: true
-  apt_key:
-    url: https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key
-    state: present
-
-- name: Adding Cloud Foundry Apt Repository
-  become: true
-  apt_repository:
-    repo: deb https://packages.cloudfoundry.org/debian stable main
-    state: present
-    filename: cloudfoundry-cli
-
 - name: Adding Docker GPG Key
   become: true
   apt_key:
@@ -23,13 +10,6 @@
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu bionic stable
     state: present
-
-- name: Update and upgrade apt packages
-  become: true
-  apt:
-    upgrade: yes
-    update_cache: yes
-    autoremove: true
 
 - name: Download ytt
   become: true
@@ -71,14 +51,17 @@
     mode: +x
     checksum: sha256:d0917d3ad0ff544a4c69a7986e710fe48e8cb2207717f77db31905d639e28c18
 
-- name: Install CF7 CLI
+- name: Install CF8 CLI
   become: true
-  apt:
-    name: cf7-cli
-
+  get_url:
+    url: https://github.com/cloudfoundry/cli/releases/download/v8.3.0/cf-cli_linux_x86-64
+    dest: /usr/local/bin/cf
+    mode: +x
+  
 - name: Install Docker
   become: true
   apt:
+    update_cache: yes
     pkg:
       - docker-ce
       - docker-ce-cli

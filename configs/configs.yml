@@ -5,6 +5,7 @@ configs:
   provision:
     tmpPath: /home/vagrant/tmp
     configPath: /home/vagrant/configs
+    credentialPath: /home/vagrant/credentials
   kube:
     configPath: /home/vagrant/configs/kube.config
   cf:

@@ -6,3 +6,4 @@
     - include_tasks: dependencies_setup.yml
     - include_tasks: env_variables_setup.yml
     - include_tasks: cf_for_k8s_setup.yml
+    - include_tasks: rabbitmq_setup.yml
