@@ -23,13 +23,17 @@ Vagrant.configure("2") do |config|
   
   config.vm.box = "generic/ubuntu2004"
 
+  # Port forwarding for RabbitMQ Management UI
   config.vm.network "forwarded_port", guest: 15672, host: 15672
+  # Port forwarding for Vault
+  config.vm.network "forwarded_port", guest: 8200, host: 8200
   
   $install_ansible_script = <<-SCRIPT
-  sudp apt update
+  sudo apt update
   sudo apt install software-properties-common
   sudo add-apt-repository --yes --update ppa:ansible/ansible
   sudo apt -y install ansible
+  ansible-galaxy collection install community.general
   SCRIPT
 
   config.vm.provision "shell", inline: $install_ansible_script

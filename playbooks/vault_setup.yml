@@ -1,0 +1,23 @@
+---
+- name: Install Helm
+  become: true
+  community.general.snap:
+    name: helm
+    classic: yes
+
+- name: Add Hashicorp Repository to Helm
+  become: true
+  shell: helm repo add hashicorp https://helm.releases.hashicorp.com
+
+- name: Install Vault using Helm
+  become: true
+  shell: helm install vault hashicorp/vault --create-namespace --namespace vault --set='server.dev.enabled=true' --set='server.dev.devRootToken=myroot'
+  args:
+    creates: "{{ TMP_DIR }}/vault.success"
+
+- name: Create placeholder file indicating successful Vault installation
+  file:
+    path: "{{ TMP_DIR }}/vault.success"
+    state: touch
+
+# kubectl port-forward "pod/vault-0" -n vault --address 0.0.0.0 8200:8200
