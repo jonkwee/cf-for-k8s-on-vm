@@ -20,36 +20,4 @@
     path: "{{ TMP_DIR }}/rmq.success"
     state: touch
 
-- name: Create shared file for RabbitMQ Credentials
-  copy:
-    content: ""
-    dest: "{{ CREDENTIAL_DIR }}/rabbitmq_cred.txt"
-    force: yes
-
-- name: Get RabbitMQ Management UI Username
-  become: true
-  shell: kubectl get secret local-rmq-default-user -o jsonpath='{.data.username}' | base64 --decode
-  register: rmq_username
-
-- debug:
-    msg: "RabbitMQ Username: {{ rmq_username.stdout }}"
-
-- name: Get RabbitMQ Management UI Password
-  become: true
-  shell: kubectl get secret local-rmq-default-user -o jsonpath='{.data.password}' | base64 --decode
-  register: rmq_password
-
-- debug:
-    msg: "RabbitMQ Password: {{ rmq_password.stdout }}"
-
-- name: Write credentials into shared file
-  lineinfile:
-    path: "{{ CREDENTIAL_DIR }}/rabbitmq_cred.txt"
-    line: "{{ item }}"
-  with_items:
-    - "{{ rmq_username.stdout }}"
-    - "{{ rmq_password.stdout }}"
-
-# - name: Port Forward RabbitMQ Management UI
-#   become: true
-#   shell: kubectl port-forward "service/local-rmq" --address 0.0.0.0 15672:15672 &
+# shell: kubectl port-forward "service/local-rmq" --address 0.0.0.0 15672:15672 &

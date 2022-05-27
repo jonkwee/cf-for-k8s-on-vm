@@ -1,0 +1,15 @@
+---
+- name: Set up Cloud Foundry credentials / space / org
+  become: true
+  shell: "{{ item }}"
+  with_items:
+    - "cf api --skip-ssl-validation https://api.vcap.me"
+    - "cf auth admin \"$(grep cf_admin_password {{ CONFIG_DIR }}/cf-values.yml | cut -d\" \" -f2)\""
+    - "cf create-org {{ CF_ORG }}"
+    - "cf create-space -o {{ CF_ORG }} {{ CF_SPACE }}"
+    - "cf target -o {{ CF_ORG }} -s {{ CF_SPACE }}"
+    - "cf disable-feature-flag resource_matching"
+
+- name: Set up Vault Service
+  become: true
+  shell: "cf create-user-provided-service vault -p /home/vagrant/cluster_configs/cf_vault_service.json"

@@ -1,0 +1,6 @@
+{
+    "host": "localhost",
+    "port": "8200",
+    "scheme": "http",
+    "token": "myroot"
+}

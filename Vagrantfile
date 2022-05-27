@@ -13,6 +13,8 @@ cf_config        = configs["configs"]["cf"]
 
 Vagrant.configure("2") do |config|
 
+  config.vm.define "local_cf"
+
   config.vm.provider "vmware_desktop" do |v|
     v.memory = 16384
     v.cpus = 8
@@ -20,7 +22,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "playbooks/", "/home/vagrant/playbooks", type: "rsync"
   config.vm.synced_folder "clusters/", "/home/vagrant/cluster_configs", type: "rsync"
   config.vm.synced_folder "credentials/", "/home/vagrant/credentials", type: "rsync"
-  
+  config.vm.synced_folder "shared/", "/vagrant"
   config.vm.box = "generic/ubuntu2004"
 
   # Port forwarding for RabbitMQ Management UI
