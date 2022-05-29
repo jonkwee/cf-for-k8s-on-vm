@@ -1,0 +1,9 @@
+server:
+  dev:
+    enabled: true
+    devRootToken: myroot
+  service:
+    enabled: true
+    clusterIP: None
+    port: 8200
+    nodePort: 8200

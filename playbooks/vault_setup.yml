@@ -11,7 +11,7 @@
 
 - name: Install Vault using Helm
   become: true
-  shell: helm install vault hashicorp/vault --create-namespace --namespace vault --set='server.dev.enabled=true' --set='server.dev.devRootToken=myroot'
+  shell: helm install vault hashicorp/vault --create-namespace --namespace vault -f /home/vagrant/cluster_configs/vault_cluster.yml
   args:
     creates: "{{ TMP_DIR }}/vault.success"
 
