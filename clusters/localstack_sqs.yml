@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: localsqs
+  namespace: sqs
+  labels:
+    app.kubernetes.io/name: sqs
+    app: sqs
+spec:
+  containers:
+    - name: sqs
+      image: localstack/localstack:0.14
+      ports:
+        - containerPort: 4576
+          hostPort: 4576
+      env:
+        - name: SERVICES
+          value: sqs
+        - name: HOSTNAME_EXTERNAL
+          value: localsqs.sqs
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localsqs
+  namespace: sqs
+  labels:
+    app.kubernetes.io/name: sqs
+spec:
+  selector:
+    app: sqs
+  clusterIP: None
+  ports:
+    - name: http
+      protocol: TCP
+      port: 4576
+      targetPort: 4576

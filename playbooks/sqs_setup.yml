@@ -1,0 +1,11 @@
+---
+- name: Create SQS namespace and apply deployment YML
+  become: true
+  shell: kubectl create namespace sqs --dry-run=client -o yaml | kubectl apply -f /home/vagrant/cluster_configs/localstack_sqs.yml
+  args:
+    creates: "{{ TMP_DIR }}/sqs.success"
+
+- name: Create placeholder file indicating successful SQS installation
+  file:
+    path: "{{ TMP_DIR }}/sqs.success"
+    state: touch
